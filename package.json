@@ -1,0 +1,22 @@
+{
+  "name": "4tech-2018",
+  "version": "1.0.0",
+  "description": "Exemplo 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brunoyalves/4tech-2018.git"
+  },
+  "author": "Bruno",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brunoyalves/4tech-2018/issues"
+  },
+  "homepage": "https://github.com/brunoyalves/4tech-2018#readme",
+  "dependencies": {
+    "express": "4.16.3"
+  }
+}
