@@ -6,12 +6,14 @@ const bodyParser = require('body-parser');
 const port = 3000;
 let jobs = require('./config/jobs.js');
 const Job = require('./model/job.js');
+const path = require('path');
 
+app.use('/vjobs', express.static(__dirname + '/app/static'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get('/', async (req, res) => {
-    return res.send('Hello World!');
+    return res.redirect('http://localhost:3000/vjobs/index.html');
 })
 
 app.get('/jobs', async (req, res) => {
@@ -34,18 +36,19 @@ app.post('/jobs', async (req, res) => {
     }
 })
 
-app.put('/jobs/:id', (req, res) => {
+app.put('/jobs/:id', async (req, res) => {
     try {
         if (!req.body) {
             return res.status(403).send('Para alterar um usuário, é necessário passar algum valor');
         }
-        let index = jobs.findIndex(job => job.id === req.params.id);
+        let index = await jobs.findIndex(job => job.id === req.params.id);
         if (index >= 0) {
             Object.keys(req.body).forEach(job => {
                 jobs[index][job] = req.body[job]
             })
             return res.send(`Vaga com o id ${req.params.id} alterada com sucesso`);
         }
+        return res.send("nao foi encontrado vaga com esse id");
     } catch (error) {
         return res.status(500).send(error);
     }
