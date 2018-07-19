@@ -1,8 +1,8 @@
 {
   "name": "4tech-2018",
   "version": "1.0.0",
-  "description": "Exemplo 1",
-  "main": "index.js",
+  "description": "Aplicação desenvolvida juntamente com os alunos da 6º edição do programa de capacitação do Venturus, o Venturus 4tech.",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/brunoyalves/4tech-2018.git"
   },
-  "author": "Bruno",
+  "author": "Bruno Sato",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/brunoyalves/4tech-2018/issues"

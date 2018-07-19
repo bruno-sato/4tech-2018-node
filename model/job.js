@@ -1,4 +1,4 @@
-class Vaga {
+class Job {
     constructor(id, name, salary, description, skills, area, differentials, isPcd, isActive) {
         this.id = id;
         this.salary = salary;
@@ -11,4 +11,4 @@ class Vaga {
         this.isActive = isActive;
     }
 }
-module.exports = Vaga;
+module.exports = Job;

@@ -1,34 +1,64 @@
+'use strict';
+
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const port = 3000;
-let vagas = require('./config/vagas.js');
-const Vaga = require('./model/vaga.js');
+let jobs = require('./config/jobs.js');
+const Job = require('./model/job.js');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get('/', async (req, res) => {
+    return res.send('Hello World!');
+})
+
+app.get('/jobs', async (req, res) => {
+    return res.send(jobs);
+})
+
+app.get('/jobs/:id', async (req, res) => {
+    return res.send(jobs.find(el => el.id === req.params.id));
+})
+
+app.post('/jobs', async (req, res) => {
     try {
-        return res.send('Hello World!');
+        let jobsLength = jobs.length;
+        let job = createJob(req.body);
+        jobs.push(job);
+        if (jobs.length > jobsLength) return res.send('Adicionado com sucesso');
+        return res.status(500).send('Ops! Aconteceu um erro tentando cadastrar a vaga.');
     } catch (error) {
-        
+        return res.status(500).send(error);        
     }
 })
 
-app.get('/vagas', async (req, res) => {
-    return res.send(vagas);
+app.put('/jobs/:id', (req, res) => {
+    try {
+        if (!req.body) {
+            return res.status(403).send('Para alterar um usuário, é necessário passar algum valor');
+        }
+        let index = jobs.findIndex(job => job.id === req.params.id);
+        if (index >= 0) {
+            Object.keys(req.body).forEach(job => {
+                jobs[index][job] = req.body[job]
+            })
+            return res.send(`Vaga com o id ${req.params.id} alterada com sucesso`);
+        }
+    } catch (error) {
+        return res.status(500).send(error);
+    }
 })
 
-app.post('/vagas', async (req, res) => {
+app.delete('/jobs/:id', (req, res) => {
     try {
-        let vagasLength = vagas.length;
-        let vaga = createVaga(req.body);
-        vagas.push(vaga);
-        if (vagas.length > vagasLength) return res.send('Added');
-        return res.status(500).send('Internal');
+        let length = jobs.length;
+        jobs.splice(jobs.findIndex(el => el.id === req.params.id), 1);
+        if (jobs.length < length) return res.send(`A vaga com o id ${req.params.id} com successo`);
+        else return res.status(500).send(`Não foi possível deletar a vaga ${req.params.id}`);
     } catch (error) {
-        return res.status(500).send('Internal error');        
+        return res.status(500).send(error);        
     }
 })
 
@@ -36,7 +66,7 @@ app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 })
 
-const createVaga = (obj) => new Vaga(
+const createJob = (obj) => new Job(
     obj.id, 
     obj.name, 
     obj.description,

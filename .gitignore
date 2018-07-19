@@ -5,6 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+#firebase key access
+/config/firebaseKey.json
+
 # Runtime data
 pids
 *.pid
