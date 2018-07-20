@@ -1,11 +1,22 @@
 'use strict';
 
-let jobs = require('../../config/jobs.js');
 const Job = require('../../model/job.js');
 
 module.exports = app => {
+    
+    const jobsCollection = app.config.firebaseConfig.collection('jobs');
+    
     app.get('/jobs', async (req, res) => {
-        return res.send(jobs);
+        try {
+            const docs = await jobsCollection.get();
+            let jobs = [];
+            docs.forEach(doc => {
+                jobs.push(extractJob(doc));
+            })
+            return res.send(jobs);
+        } catch (error) {
+            return res.status(500).send('error')
+        }
     })
     
     app.get('/jobs/:id', async (req, res) => {
@@ -14,11 +25,12 @@ module.exports = app => {
     
     app.post('/jobs', async (req, res) => {
         try {
-            let jobsLength = jobs.length;
-            let job = createJob(req.body);
-            jobs.push(job);
-            if (jobs.length > jobsLength) return res.send('Adicionado com sucesso');
-            return res.status(500).send('Ops! Aconteceu um erro tentando cadastrar a vaga.');
+            const fbReturn = await jobsCollection.doc().set(req.body);
+            if (fbReturn) {
+                return res.send('Adicionado com sucesso');
+            } else {
+                throw Error;
+            }
         } catch (error) {
             return res.status(500).send(error);        
         }
@@ -53,6 +65,19 @@ module.exports = app => {
         }
     })
     
+    const extractJob = (job) => {
+        let v = job.data();
+        return {
+            id: job.id,
+            name: v.name,
+            description: v.description,
+            skills: v.skills,
+            differentials: v.differentials,
+            isPcd: v.isPcd,
+            isActive: v.isActive
+        }
+    }
+
     const createJob = (obj) => new Job(
         obj.id, 
         obj.name, 

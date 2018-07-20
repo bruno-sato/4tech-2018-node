@@ -9,7 +9,8 @@ const consign = require('consign');
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
 consign()
-    .include('./app/routes')
+    .include('./config/firebaseConfig.js')
+    .then('./app/routes')
     .into(server)
 
 module.exports = server;
