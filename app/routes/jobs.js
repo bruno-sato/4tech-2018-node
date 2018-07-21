@@ -1,7 +1,5 @@
 'use strict';
 
-const Job = require('../../model/job.js');
-
 module.exports = app => {
     
     const jobsCollection = app.config.firebaseConfig.collection('jobs');
@@ -10,7 +8,7 @@ module.exports = app => {
         try {
             const docs = await jobsCollection.get();
             let jobs = [];
-            docs.forEach(doc => {
+            docs.forEach(doc => { 
                 jobs.push(extractJob(doc));
             })
             return res.send(jobs);
@@ -20,12 +18,26 @@ module.exports = app => {
     })
     
     app.get('/jobs/:id', async (req, res) => {
-        return res.send(jobs.find(el => el.id === req.params.id));
+        const doc = await jobsCollection.doc(req.params.id).get();
+        if (doc) {
+            return res.send(extractJob(doc));
+        } else {
+            throw Error;
+        }
     })
     
     app.post('/jobs', async (req, res) => {
         try {
-            const fbReturn = await jobsCollection.doc().set(req.body);
+            const fbReturn = await jobsCollection.doc().set({
+                "name": v.name, 
+                "salary": v.salary,
+                "area": v.area,
+                "description": v.description,
+                "skills": v.skills,
+                "differentials": v.differentials,
+                "isPcd": v.isPcd,
+                "isActive": v.isActive
+            });
             if (fbReturn) {
                 return res.send('Adicionado com sucesso');
             } else {
@@ -41,25 +53,25 @@ module.exports = app => {
             if (!req.body) {
                 return res.status(403).send('Para alterar um usuário, é necessário passar algum valor');
             }
-            let index = await jobs.findIndex(job => job.id === req.params.id);
-            if (index >= 0) {
-                Object.keys(req.body).forEach(job => {
-                    jobs[index][job] = req.body[job]
-                })
-                return res.send(`Vaga com o id ${req.params.id} alterada com sucesso`);
+            const jobDoc = await jobsCollection.doc(req.params.id).update(req.body);
+            if (jobDoc) {
+                return res.send(`Vaga ${req.params.id} foi atualizada com sucesso!`);
+            } else {
+                return res.send(`A vaga ${req.params.id} não foi encontrada`);
             }
-            return res.send("nao foi encontrado vaga com esse id");
         } catch (error) {
             return res.status(500).send(error);
         }
     })
     
-    app.delete('/jobs/:id', (req, res) => {
+    app.delete('/jobs/:id', async (req, res) => {
         try {
-            let length = jobs.length;
-            jobs.splice(jobs.findIndex(el => el.id === req.params.id), 1);
-            if (jobs.length < length) return res.send(`A vaga com o id ${req.params.id} com successo`);
-            else return res.status(500).send(`Não foi possível deletar a vaga ${req.params.id}`);
+            const deletedJob = await jobsCollection.doc(req.params.id).delete();
+            if (deletedJob) {
+                return res.send(`Vaga ${req.params.id} foi apagada com successo`);
+            } else {
+                throw Error;
+            }
         } catch (error) {
             return res.status(500).send(error);        
         }
@@ -69,7 +81,9 @@ module.exports = app => {
         let v = job.data();
         return {
             id: job.id,
-            name: v.name,
+            name: v.name, 
+            salary: v.salary,
+            area: v.area,
             description: v.description,
             skills: v.skills,
             differentials: v.differentials,
@@ -77,16 +91,4 @@ module.exports = app => {
             isActive: v.isActive
         }
     }
-
-    const createJob = (obj) => new Job(
-        obj.id, 
-        obj.name, 
-        obj.description,
-        obj.skills, 
-        obj.salary, 
-        obj.area, 
-        obj.differentials, 
-        obj.isPcd, 
-        obj.isActive 
-    )
 }
