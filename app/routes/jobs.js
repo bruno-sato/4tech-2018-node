@@ -28,18 +28,19 @@ module.exports = app => {
     
     app.post('/jobs', async (req, res) => {
         try {
-            const fbReturn = await jobsCollection.doc().set({
-                "name": v.name, 
-                "salary": v.salary,
-                "area": v.area,
-                "description": v.description,
-                "skills": v.skills,
-                "differentials": v.differentials,
-                "isPcd": v.isPcd,
-                "isActive": v.isActive
-            });
+            let job = {
+                "name": req.body.name, 
+                "salary": req.body.salary,
+                "area": req.body.area,
+                "description": req.body.description,
+                "skills": req.body.skills,
+                "differentials": req.body.differentials,
+                "isPcd": req.body.isPcd,
+                "isActive": req.body.isActive
+            }
+            const fbReturn = await jobsCollection.add(job);
             if (fbReturn) {
-                return res.send('Adicionado com sucesso');
+                return res.send(`Vaga ${fbReturn.id} adicionada com sucesso!`);
             } else {
                 throw Error;
             }
