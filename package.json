@@ -18,6 +18,7 @@
   "homepage": "https://github.com/brunoyalves/4tech-2018#readme",
   "dependencies": {
     "consign": "0.1.6",
+    "cors": "2.8.4",
     "express": "4.16.3",
     "firebase-admin": "5.13.0"
   }
