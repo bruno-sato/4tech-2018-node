@@ -12,6 +12,7 @@ const consign = require('consign');
 
 //Import do módulo para configuração de cors
 const cors = require('cors')
+
 server.use(cors());
 
 server.use(bodyParser.urlencoded({ extended: false }));
