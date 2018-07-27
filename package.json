@@ -2,8 +2,9 @@
   "name": "4tech-2018",
   "version": "1.0.0",
   "description": "Aplicação desenvolvida juntamente com os alunos da 6º edição do programa de capacitação do Venturus, o Venturus 4tech.",
-  "main": "app.js",
+  "main": "node app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
