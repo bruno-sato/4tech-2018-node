@@ -6,7 +6,7 @@ const port = process.env.PORT || 3000;
 
 server.use('/vjobs', express.static(__dirname + '/app/static'));
 server.get('/', async (req, res) => {
-    return res.redirect('http://localhost:3000/vjobs');
+    return res.redirect(`https://testdeployoija.herokuapp.com:${port}/vjobs`);
 })
 
 server.listen(port, () => {
