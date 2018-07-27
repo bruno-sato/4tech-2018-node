@@ -1,5 +1,7 @@
 'use strict';
 
+const tokenValidator = require('../../config/security/tokenValidator');
+
 module.exports = app => {
     
     const jobsCollection = app.config.firebaseConfig.collection('jobs');
@@ -26,7 +28,7 @@ module.exports = app => {
         }
     })
     
-    app.post('/jobs', async (req, res) => {
+    app.post('/jobs', tokenValidator, async (req, res) => {
         try {
             let job = {
                 "name": req.body.name, 
@@ -40,7 +42,7 @@ module.exports = app => {
             }
             const fbReturn = await jobsCollection.add(job);
             if (fbReturn) {
-                return res.send(`Vaga ${fbReturn.id} adicionada com sucesso!`);
+                return res.send(fbReturn.id);
             } else {
                 throw Error;
             }
@@ -49,7 +51,7 @@ module.exports = app => {
         }
     })
     
-    app.put('/jobs/:id', async (req, res) => {
+    app.put('/jobs/:id',tokenValidator, async (req, res) => {
         try {
             if (!req.body) {
                 return res.status(403).send('Para alterar um usuário, é necessário passar algum valor');
@@ -65,7 +67,7 @@ module.exports = app => {
         }
     })
     
-    app.delete('/jobs/:id', async (req, res) => {
+    app.delete('/jobs/:id',tokenValidator, async (req, res) => {
         try {
             const deletedJob = await jobsCollection.doc(req.params.id).delete();
             if (deletedJob) {
